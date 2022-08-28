@@ -52,6 +52,7 @@ export type GroupQueries = {};
 
 export type GroupMethods = {
   isAdmin: (this: GroupDocument, ...args: any[]) => any;
+  isParticipant: (this: GroupDocument, ...args: any[]) => any;
 };
 
 export type GroupStatics = {};

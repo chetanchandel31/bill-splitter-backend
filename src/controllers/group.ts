@@ -59,12 +59,21 @@ export const deleteGroup: RequestHandler = async (req, res) => {
 
 export const getGroupById: RequestHandler = async (req, res) => {
   const { groupId } = req.params;
+  const userId = req.userFromToken?._id.toString();
 
   try {
     const group = await Group.findOne({ _id: groupId }).populate(
       "admins members",
       "email name _id"
     );
+
+    if (!group?.isParticipant(userId)) {
+      return res
+        .status(401)
+        .json({
+          error: "you need to be a part of the group to see it's details",
+        });
+    }
 
     res.json(group);
   } catch (error: any) {

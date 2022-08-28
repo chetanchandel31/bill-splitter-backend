@@ -10,7 +10,7 @@ import { protect } from "../middlewares/protect";
 const router = express.Router();
 
 router.get("/groups", protect, listGroups); // list all of User's groups w/o populated participants
-router.get("/groups/:groupId", protect, getGroupById);
+router.get("/groups/:groupId", protect, getGroupById); // returns group with user's participants details
 router.post("/groups", protect, createGroup);
 router.delete("/groups/:groupId", protect, deleteGroup);
 
