@@ -2,12 +2,23 @@ import cors from "cors";
 import dotenv from "dotenv";
 import express from "express";
 import mongoose from "mongoose";
+import { UserDocument } from "./interfaces/mongoose.gen";
 import { addFakeDelayBeforeResponse } from "./middlewares/addFakeDelayBeforeResponse";
 import { errorHandler } from "./middlewares/errorHandler";
 import { routeNotFound } from "./middlewares/routeNotFound";
 import authRoutes from "./routes/auth";
+import groupRoutes from "./routes/group";
 
 dotenv.config();
+
+// to be able to add custom properties to request via middlewares
+declare global {
+  namespace Express {
+    interface Request {
+      userFromToken?: UserDocument;
+    }
+  }
+}
 
 const app = express();
 
@@ -22,6 +33,7 @@ app.get("/api", (req, res) =>
   res.send({ name: "bill-splitter", status: "ok" })
 );
 app.use("/api", authRoutes);
+app.use("/api", groupRoutes);
 
 // handle errors and 404s
 app.use(routeNotFound);

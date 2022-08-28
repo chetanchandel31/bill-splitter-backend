@@ -12,6 +12,7 @@ const userSchema: UserSchema = new mongoose.Schema({
   email: { type: String, required: true, unique: true },
   salt: { type: String, required: true },
   encryptedPassword: { type: String, required: true },
+  groups: { type: [{ type: "ObjectId", ref: "Group" }], default: [] },
 });
 
 userSchema.virtual("password").set(function (plainPassword) {

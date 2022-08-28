@@ -8,6 +8,98 @@
 import mongoose from "mongoose";
 
 /**
+ * Lean version of GroupDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `GroupDocument.toObject()`. To avoid conflicts with model names, use the type alias `GroupObject`.
+ * ```
+ * const groupObject = group.toObject();
+ * ```
+ */
+export type Group = {
+  groupName: string;
+  admins: (User["_id"] | User)[];
+  members: (User["_id"] | User)[];
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of GroupDocument (type alias of `Group`)
+ *
+ * Use this type alias to avoid conflicts with model names:
+ * ```
+ * import { Group } from "../models"
+ * import { GroupObject } from "../interfaces/mongoose.gen.ts"
+ *
+ * const groupObject: GroupObject = group.toObject();
+ * ```
+ */
+export type GroupObject = Group;
+
+/**
+ * Mongoose Query type
+ *
+ * This type is returned from query functions. For most use cases, you should not need to use this type explicitly.
+ */
+export type GroupQuery = mongoose.Query<any, GroupDocument, GroupQueries> &
+  GroupQueries;
+
+/**
+ * Mongoose Query helper types
+ *
+ * This type represents `GroupSchema.query`. For most use cases, you should not need to use this type explicitly.
+ */
+export type GroupQueries = {};
+
+export type GroupMethods = {};
+
+export type GroupStatics = {};
+
+/**
+ * Mongoose Model type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Group = mongoose.model<GroupDocument, GroupModel>("Group", GroupSchema);
+ * ```
+ */
+export type GroupModel = mongoose.Model<GroupDocument, GroupQueries> &
+  GroupStatics;
+
+/**
+ * Mongoose Schema type
+ *
+ * Assign this type to new Group schema instances:
+ * ```
+ * const GroupSchema: GroupSchema = new mongoose.Schema({ ... })
+ * ```
+ */
+export type GroupSchema = mongoose.Schema<
+  GroupDocument,
+  GroupModel,
+  GroupMethods,
+  GroupQueries
+>;
+
+/**
+ * Mongoose Document type
+ *
+ * Pass this type to the Mongoose Model constructor:
+ * ```
+ * const Group = mongoose.model<GroupDocument, GroupModel>("Group", GroupSchema);
+ * ```
+ */
+export type GroupDocument = mongoose.Document<
+  mongoose.Types.ObjectId,
+  GroupQueries
+> &
+  GroupMethods & {
+    groupName: string;
+    admins: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
+    members: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
+    _id: mongoose.Types.ObjectId;
+  };
+
+/**
  * Lean version of UserDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserObject`.
@@ -20,6 +112,7 @@ export type User = {
   email: string;
   salt: string;
   encryptedPassword: string;
+  groups: (Group["_id"] | Group)[];
   _id: mongoose.Types.ObjectId;
 };
 
@@ -99,6 +192,7 @@ export type UserDocument = mongoose.Document<
     email: string;
     salt: string;
     encryptedPassword: string;
+    groups: mongoose.Types.Array<GroupDocument["_id"] | GroupDocument>;
     _id: mongoose.Types.ObjectId;
     password: any;
   };
