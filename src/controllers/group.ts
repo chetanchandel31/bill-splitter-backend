@@ -38,9 +38,19 @@ export const listGroups: RequestHandler = async (req, res) => {
 
 export const deleteGroup: RequestHandler = async (req, res) => {
   const { groupId } = req.params;
+  const userId = req.userFromToken?._id.toString();
+
   try {
-    const deletedGroup = await Group.findByIdAndRemove(groupId);
-    res.json(deletedGroup);
+    const group = await Group.findOne({ _id: groupId });
+    if (!group?.isAdmin(userId)) {
+      return res
+        .status(401)
+        .json({ error: "you need to be admin to perform this action" });
+    }
+
+    await Group.findByIdAndRemove(groupId);
+
+    res.json(group);
   } catch (error: any) {
     console.log(error);
     res.status(500).json({ error: error?.message || "failed to delete group" });

@@ -50,7 +50,9 @@ export type GroupQuery = mongoose.Query<any, GroupDocument, GroupQueries> &
  */
 export type GroupQueries = {};
 
-export type GroupMethods = {};
+export type GroupMethods = {
+  isAdmin: (this: GroupDocument, ...args: any[]) => any;
+};
 
 export type GroupStatics = {};
 

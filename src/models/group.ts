@@ -11,4 +11,10 @@ const groupSchema: GroupSchema = new mongoose.Schema({
   members: { type: [{ type: "ObjectId", ref: "User" }], default: [] },
 });
 
+groupSchema.methods = {
+  isAdmin: function (userId: string) {
+    return this.admins.some((objectId) => objectId.toString() === userId);
+  },
+};
+
 export default mongoose.model<GroupDocument, GroupModel>("Group", groupSchema);
