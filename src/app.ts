@@ -5,6 +5,7 @@ import mongoose from "mongoose";
 import { addFakeDelayBeforeResponse } from "./middlewares/addFakeDelayBeforeResponse";
 import { errorHandler } from "./middlewares/errorHandler";
 import { routeNotFound } from "./middlewares/routeNotFound";
+import authRoutes from "./routes/auth";
 
 dotenv.config();
 
@@ -20,6 +21,7 @@ app.use(addFakeDelayBeforeResponse(app.settings.env));
 app.get("/api", (req, res) =>
   res.send({ name: "bill-splitter", status: "ok" })
 );
+app.use("/api", authRoutes);
 
 // handle errors and 404s
 app.use(routeNotFound);
