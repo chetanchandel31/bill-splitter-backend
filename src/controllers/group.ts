@@ -12,7 +12,7 @@ export const createGroup: RequestHandler = async (req, res) => {
 
     // add group to user
     const usersExistingGroups = req.userFromToken?.groups || [];
-    const updatedUser = await User.findOneAndUpdate(
+    await User.findOneAndUpdate(
       { _id: req.userFromToken?._id },
       { groups: [...usersExistingGroups, savedGroup._id] },
       { new: true }
@@ -21,6 +21,17 @@ export const createGroup: RequestHandler = async (req, res) => {
     res.json(savedGroup);
   } catch (error: any) {
     console.log(error);
-    res.status(500).json({ error: error?.message || "signin failed" });
+    res.status(500).json({ error: error?.message || "failed to create group" });
+  }
+};
+
+export const listGroups: RequestHandler = async (req, res) => {
+  try {
+    const user = await User.findById(req.userFromToken?._id).populate("groups");
+
+    res.json(user?.groups);
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ error: error?.message || "failed to list groups" });
   }
 };
