@@ -13,12 +13,22 @@ const groupSchema: GroupSchema = new mongoose.Schema({
 
 groupSchema.methods = {
   isAdmin: function (userId: string) {
-    return this.admins.some((objectId) => objectId.toString() === userId);
+    // if not populated way to get id is `admin?.toString()`, otherwise `admin?._id.toString()`
+    return this.admins.some(
+      (admin) =>
+        admin?.toString() === userId || admin?._id.toString() === userId
+    );
   },
   isParticipant: function (userId: string) {
     return (
-      this.admins.some((objectId) => objectId.toString() === userId) ||
-      this.members.some((objectId) => objectId.toString() === userId)
+      this.admins.some(
+        (admin) =>
+          admin.toString() === userId || admin?._id.toString() === userId
+      ) ||
+      this.members.some(
+        (member) =>
+          member?.toString() === userId || member?._id.toString() === userId
+      )
     );
   },
 };

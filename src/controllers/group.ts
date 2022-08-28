@@ -68,11 +68,9 @@ export const getGroupById: RequestHandler = async (req, res) => {
     );
 
     if (!group?.isParticipant(userId)) {
-      return res
-        .status(401)
-        .json({
-          error: "you need to be a part of the group to see it's details",
-        });
+      return res.status(401).json({
+        error: "you need to be a part of the group to see it's details",
+      });
     }
 
     res.json(group);
