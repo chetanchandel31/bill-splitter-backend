@@ -35,3 +35,14 @@ export const listGroups: RequestHandler = async (req, res) => {
     res.status(500).json({ error: error?.message || "failed to list groups" });
   }
 };
+
+export const deleteGroup: RequestHandler = async (req, res) => {
+  const { groupId } = req.params;
+  try {
+    const deletedGroup = await Group.findByIdAndRemove(groupId);
+    res.json(deletedGroup);
+  } catch (error: any) {
+    console.log(error);
+    res.status(500).json({ error: error?.message || "failed to delete group" });
+  }
+};
