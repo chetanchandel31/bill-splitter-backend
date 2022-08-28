@@ -56,3 +56,21 @@ export const deleteGroup: RequestHandler = async (req, res) => {
     res.status(500).json({ error: error?.message || "failed to delete group" });
   }
 };
+
+export const getGroupById: RequestHandler = async (req, res) => {
+  const { groupId } = req.params;
+
+  try {
+    const group = await Group.findOne({ _id: groupId }).populate(
+      "admins members",
+      "email name _id"
+    );
+
+    res.json(group);
+  } catch (error: any) {
+    console.log(error);
+    res
+      .status(500)
+      .json({ error: error?.message || "failed to get group details" });
+  }
+};
