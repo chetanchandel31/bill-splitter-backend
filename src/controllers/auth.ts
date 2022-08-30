@@ -27,7 +27,7 @@ export const signup: RequestHandler = async (req, res) => {
     });
   } catch (err: any) {
     console.log(err);
-    res.status(400).json({ error: err?.message || "signup failed" });
+    res.status(500).json({ error: err?.message || "signup failed" });
   }
 };
 

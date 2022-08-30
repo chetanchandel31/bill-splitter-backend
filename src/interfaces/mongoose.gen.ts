@@ -103,6 +103,20 @@ export type GroupDocument = mongoose.Document<
   };
 
 /**
+ * Lean version of UserInviteDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`.
+ * ```
+ * const userObject = user.toObject();
+ * ```
+ */
+export type UserInvite = {
+  invitedTo?: Group["_id"] | Group;
+  invitedBy?: User["_id"] | User;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
  * Lean version of UserDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `UserDocument.toObject()`. To avoid conflicts with model names, use the type alias `UserObject`.
@@ -117,6 +131,7 @@ export type User = {
   encryptedPassword: string;
   groups: (Group["_id"] | Group)[];
   _id: mongoose.Types.ObjectId;
+  invites: UserInvite[];
 };
 
 /**
@@ -179,6 +194,17 @@ export type UserSchema = mongoose.Schema<
 >;
 
 /**
+ * Mongoose Subdocument type
+ *
+ * Type of `UserDocument["invites"]` element.
+ */
+export type UserInviteDocument = mongoose.Types.Subdocument & {
+  invitedTo?: GroupDocument["_id"] | GroupDocument;
+  invitedBy?: UserDocument["_id"] | UserDocument;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -198,6 +224,7 @@ export type UserDocument = mongoose.Document<
     groups: mongoose.Types.Array<GroupDocument["_id"] | GroupDocument>;
     _id: mongoose.Types.ObjectId;
     password: any;
+    invites: mongoose.Types.DocumentArray<UserInviteDocument>;
   };
 
 /**

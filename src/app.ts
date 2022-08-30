@@ -8,6 +8,7 @@ import { errorHandler } from "./middlewares/errorHandler";
 import { routeNotFound } from "./middlewares/routeNotFound";
 import authRoutes from "./routes/auth";
 import groupRoutes from "./routes/group";
+import inviteRoutes from "./routes/invite";
 
 dotenv.config();
 
@@ -29,11 +30,12 @@ app.use(cors());
 app.use(addFakeDelayBeforeResponse(app.settings.env));
 
 // routes
-app.get("/api", (req, res) =>
+app.get("/api", (_req, res) =>
   res.send({ name: "bill-splitter", status: "ok" })
 );
 app.use("/api", authRoutes);
 app.use("/api", groupRoutes);
+app.use("/api", inviteRoutes);
 
 // handle errors and 404s
 app.use(routeNotFound);

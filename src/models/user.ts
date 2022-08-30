@@ -13,6 +13,15 @@ const userSchema: UserSchema = new mongoose.Schema({
   salt: { type: String, required: true },
   encryptedPassword: { type: String, required: true },
   groups: { type: [{ type: "ObjectId", ref: "Group" }], default: [] },
+  invites: {
+    type: [
+      {
+        invitedTo: { type: "ObjectId", ref: "Group" },
+        invitedBy: { type: "ObjectId", ref: "User" },
+      },
+    ],
+    default: [],
+  },
 });
 
 userSchema.virtual("password").set(function (plainPassword) {
