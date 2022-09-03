@@ -8,6 +8,41 @@
 import mongoose from "mongoose";
 
 /**
+ * Lean version of GroupExpenseBorrowerDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `GroupExpenseDocument.toObject()`.
+ * ```
+ * const groupexpenseObject = groupexpense.toObject();
+ * ```
+ */
+export type GroupExpenseBorrower = {
+  user: User["_id"] | User;
+  amountBorrowed: number;
+  isSettled?: boolean;
+  isApprovedByLender?: boolean;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Lean version of GroupExpenseDocument
+ *
+ * This has all Mongoose getters & functions removed. This type will be returned from `GroupDocument.toObject()`.
+ * ```
+ * const groupObject = group.toObject();
+ * ```
+ */
+export type GroupExpense = {
+  expenseTitle: string;
+  lender: {
+    user: User["_id"] | User;
+    amountPaidForOwnExpense: number;
+  };
+  borrowers: GroupExpenseBorrower[];
+  recordedAt: number;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
  * Lean version of GroupDocument
  *
  * This has all Mongoose getters & functions removed. This type will be returned from `GroupDocument.toObject()`. To avoid conflicts with model names, use the type alias `GroupObject`.
@@ -19,6 +54,7 @@ export type Group = {
   groupName: string;
   admins: (User["_id"] | User)[];
   members: (User["_id"] | User)[];
+  expenses: GroupExpense[];
   _id: mongoose.Types.ObjectId;
 };
 
@@ -84,6 +120,35 @@ export type GroupSchema = mongoose.Schema<
 >;
 
 /**
+ * Mongoose Subdocument type
+ *
+ * Type of `GroupExpenseDocument["borrowers"]` element.
+ */
+export type GroupExpenseBorrowerDocument = mongoose.Types.Subdocument & {
+  user: UserDocument["_id"] | UserDocument;
+  amountBorrowed: number;
+  isSettled?: boolean;
+  isApprovedByLender?: boolean;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
+ * Mongoose Subdocument type
+ *
+ * Type of `GroupDocument["expenses"]` element.
+ */
+export type GroupExpenseDocument = mongoose.Types.Subdocument & {
+  expenseTitle: string;
+  lender: {
+    user: UserDocument["_id"] | UserDocument;
+    amountPaidForOwnExpense: number;
+  };
+  borrowers: mongoose.Types.DocumentArray<GroupExpenseBorrowerDocument>;
+  recordedAt: number;
+  _id: mongoose.Types.ObjectId;
+};
+
+/**
  * Mongoose Document type
  *
  * Pass this type to the Mongoose Model constructor:
@@ -99,6 +164,7 @@ export type GroupDocument = mongoose.Document<
     groupName: string;
     admins: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
     members: mongoose.Types.Array<UserDocument["_id"] | UserDocument>;
+    expenses: mongoose.Types.DocumentArray<GroupExpenseDocument>;
     _id: mongoose.Types.ObjectId;
   };
 

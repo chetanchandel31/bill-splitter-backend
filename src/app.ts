@@ -7,6 +7,7 @@ import { addFakeDelayBeforeResponse } from "./middlewares/addFakeDelayBeforeResp
 import { errorHandler } from "./middlewares/errorHandler";
 import { routeNotFound } from "./middlewares/routeNotFound";
 import authRoutes from "./routes/auth";
+import expenseRoutes from "./routes/expense";
 import groupRoutes from "./routes/group";
 import inviteRoutes from "./routes/invite";
 
@@ -36,6 +37,7 @@ app.get("/api", (_req, res) =>
 app.use("/api", authRoutes);
 app.use("/api", groupRoutes);
 app.use("/api", inviteRoutes);
+app.use("/api", expenseRoutes);
 
 // handle errors and 404s
 app.use(routeNotFound);
