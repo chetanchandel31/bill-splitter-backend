@@ -25,6 +25,7 @@ export const createGroup: RequestHandler = async (req, res) => {
   }
 };
 
+// TODO: it shouldn't send expenses array
 export const listGroups: RequestHandler = async (req, res) => {
   try {
     const user = await User.findById(req.userFromToken?._id).populate("groups");

@@ -65,7 +65,7 @@ export const sendInvite: RequestHandler = async (req, res) => {
 
     res.json({
       ok: true,
-      message: `invited ${invitedUser?.name} successfully`,
+      message: `invite sent to ${invitedUser?.name} successfully`,
     });
   } catch (error: any) {
     console.log(error);
