@@ -1,41 +1,6 @@
 import { RequestHandler } from "express";
 import Group from "../models/group";
 
-/*
-Expense title
-1. share of expense             
-(?you)paid on their behalf   
-
-2. share of expense
-amount due to `userName`
-
-{
-  expenseTitle: "snakcs",
-  lender: {
-    user: { _id: "" },
-    amountPaidForOwnExpense: 111,
-  },
-  borrowers: [
-    { 
-      user: { _id: "" },
-      amountBorrowed: 100
-      isSettled: false,
-      isApprovedByLender: false
-    },
-  ],
-  recordedAt: 111,
-}
-
-{
-  groupId: "",
-  expenseTitle: "",
-  amountPaidForOwnExpense: 111,
-  borrowers : [{ userId: "", amountBorrowed: 11 }],
-
-}
-
-*/
-
 export const expenseAdd: RequestHandler = async (req, res) => {
   const { groupId, expenseTitle, amountPaidForOwnExpense, borrowers } =
     req.body;
@@ -174,32 +139,30 @@ export const expenseApprove: RequestHandler = async (req, res) => {
         .json({ error: "only the lender of an expense can settle it" });
     }
 
-    // TODO: check if borrowerId even exists on expense, check if expense already approved
+    // TODO: check if borrower even exists
 
-    await Group.findOneAndUpdate(
-      { _id: groupId },
+    // great example of updating nested array
+
+    const updatedGroup = await Group.findOneAndUpdate(
       {
-        expenses: [...existingExpenses].map((expense) => {
-          if (expense?._id?.toString() === expenseId) {
-            return {
-              ...expense,
-              borrowers: expense.borrowers.map((borrower) => {
-                if (borrower?.user?._id?.toString() === borrowerId) {
-                  return { ...borrower, isApprovedByLender: true };
-                }
-
-                return borrower;
-              }),
-            };
-          }
-
-          return expense;
-        }),
+        _id: groupId,
+        "expenses._id": expenseId,
+        "expenses.borrowers._id": borrowerId,
       },
-      { new: true }
+      {
+        $set: {
+          "expenses.$[expense].borrowers.$[borrower].isApprovedByLender": true,
+        },
+      },
+      {
+        arrayFilters: [
+          { "expense._id": expenseId },
+          { "borrower._id": borrowerId },
+        ],
+      }
     );
 
-    res.json({ ok: true });
+    res.json({ ok: !!updatedGroup });
   } catch (error: any) {
     console.log(error);
     res
