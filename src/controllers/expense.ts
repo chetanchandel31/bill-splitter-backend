@@ -74,30 +74,27 @@ export const expenseSettle: RequestHandler = async (req, res) => {
 
     // TODO: check if borrower(i.e. req sender) even exists on expense, check if expense already settled
 
-    await Group.findOneAndUpdate(
-      { _id: groupId },
+    const updatedGroup = await Group.findOneAndUpdate(
       {
-        expenses: [...existingExpenses].map((expense) => {
-          if (expense?._id?.toString() === expenseId) {
-            return {
-              ...expense,
-              borrowers: expense.borrowers.map((borrower) => {
-                if (borrower?.user?._id?.toString() === userId) {
-                  return { ...borrower, isSettled: true };
-                }
-
-                return borrower;
-              }),
-            };
-          }
-
-          return expense;
-        }),
+        _id: groupId,
+        "expenses._id": expenseId,
+        "expenses.borrowers.user": userId,
       },
-      { new: true }
+      {
+        $set: {
+          "expenses.$[expense].borrowers.$[borrower].isSettled": true,
+        },
+      },
+      {
+        arrayFilters: [
+          { "expense._id": expenseId },
+          { "borrower.user": userId },
+        ],
+        new: true,
+      }
     );
 
-    res.json({ ok: true });
+    res.json({ ok: !!updatedGroup });
   } catch (error: any) {
     console.log(error);
     res
@@ -159,6 +156,7 @@ export const expenseApprove: RequestHandler = async (req, res) => {
           { "expense._id": expenseId },
           { "borrower._id": borrowerId },
         ],
+        new: true,
       }
     );
 
