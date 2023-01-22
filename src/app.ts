@@ -31,7 +31,7 @@ app.use(cors());
 app.use(addFakeDelayBeforeResponse(app.settings.env));
 
 // routes
-app.get("/api", (_req, res) => res.send({ name: "bill-splitter", ok: true }));
+app.get("/api", (_req, res) => res.send({ name: "Bill-Splitter", ok: true }));
 app.use("/api", authRoutes);
 app.use("/api", groupRoutes);
 app.use("/api", inviteRoutes);
